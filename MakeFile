@@ -1,0 +1,39 @@
+APP_Name := online-Wallet
+DOCKER_COMPOSE := docker-compose
+GO := go
+DB_USER := postgres
+DB_PASSWORD := strongPass
+DB_HOST := localhost
+DB_PORT := 5432
+DB_NAME := identity_db
+
+#default target
+.PHONY : help
+help :
+	@echo "Usage:"
+	@echo "  make build        Build the Go application"
+	@echo "  make run          Run the Go application"
+	@echo "  make docker-up    Start Docker Compose services"
+	@echo "  make docker-down  Stop Docker Compose services"
+	@echo "  make create-db    Create the database (if not created)"
+	@echo "  make migrate      Run database migrations"
+
+# Build the Go application
+.PHONY: build
+build:
+	$(GO) build -o bin/$(APP_NAME) ./cmd/main.go
+
+# Run the Go application
+.PHONY: run
+run:
+	$(GO) run ./identity-service/main.go
+
+# Start Docker Compose services
+.PHONY: docker-up
+docker-up:
+	$(DOCKER_COMPOSE) up -d
+
+# Create the database (if not using POSTGRES_DB)
+.PHONY: create-db
+create-db:
+	$(DOCKER_COMPOSE) exec postgres psql -U $(DB_USER) -c "CREATE DATABASE $(DB_NAME);"
