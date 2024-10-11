@@ -27,6 +27,6 @@ func InitializeRoutes() *http.ServeMux {
 
 	// Define routes and associate them with handlers
 	mux.HandleFunc("/signup", userHandler.Signup)
-
+	mux.HandleFunc("/login", userHandler.Login)
 	return mux
 }

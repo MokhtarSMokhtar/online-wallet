@@ -12,7 +12,8 @@ type User struct {
 	Country      string         `json:"country"`
 	CountryCode  string         `json:"country_code"`
 	Phone        string         `json:"phone"`
-	PasswordHash []byte         `json:"-"`
+	PasswordHash []byte         `json:"password_hash"`
+	Salt         []byte         `json:"salt"`
 	UserType     enums.UserType `json:"user_type"`
 	Gender       string         `json:"gender"`
 	CreatedAt    time.Time      `json:"created_at"`
@@ -35,4 +36,10 @@ type UserLogin struct {
 	Email    string `json:"email"`
 	Phone    string `json:"phone"`
 	Token    string `json:"token"`
+}
+
+type UserLoginRequest struct {
+	CountryCode string `json:"country_code"`
+	Phone       string `json:"phone"`
+	Password    string `json:"password"`
 }
