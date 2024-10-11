@@ -1,17 +1,19 @@
 package shared
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"crypto/sha256"
+	"crypto/subtle"
+	"golang.org/x/crypto/pbkdf2"
 )
 
-// HashPassword hashes the given password using bcrypt.
-func HashPassword(password string) ([]byte, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return bytes, err
+func HashPassword(password string, salt []byte) []byte {
+	// Use PBKDF2 to hash the password with the salt
+	hashedPassword := pbkdf2.Key([]byte(password), salt, 10000, 32, sha256.New)
+	return hashedPassword
 }
 
-// CheckPasswordHash compares a hashed password with its possible plaintext equivalent.
-func CheckPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
+func VerifyPassword(password string, salt []byte, storedHash []byte) bool {
+	computedHash := pbkdf2.Key([]byte(password), salt, 10000, 32, sha256.New)
+	// Use constant time comparison to prevent timing attacks
+	return subtle.ConstantTimeCompare(computedHash, storedHash) == 1
 }
