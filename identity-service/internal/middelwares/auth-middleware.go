@@ -2,7 +2,6 @@ package middelwares
 
 import (
 	"context"
-	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/jwt"
 	"net/http"
 	"strings"
 )
