@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/middelwares"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/repository"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/sql"
 	"log"
@@ -28,5 +29,10 @@ func InitializeRoutes() *http.ServeMux {
 	// Define routes and associate them with handlers
 	mux.HandleFunc("/signup", userHandler.Signup)
 	mux.HandleFunc("/login", userHandler.Login)
+	protectedMux := http.NewServeMux()
+	protectedMux.HandleFunc("/protected", userHandler.ProtectedEndpoint)
+
+	// Apply middleware to protected routes
+	mux.Handle("/protected", middelwares.AuthMiddleware(protectedMux))
 	return mux
 }
