@@ -11,9 +11,19 @@ services:
       - pdata:/var/lib/postgresql/data
     networks:
       - backend
+  mongodb:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=mongopw
+    ports:
+      - 27017:27017
+    volumes:
+      - /var/lib/mongodb/data
 
 volumes:
   pdata:
+  mongodb:
 
 networks:
   backend:
