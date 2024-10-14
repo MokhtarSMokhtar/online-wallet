@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/jwt"
+	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/middelwares"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/models"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/repository"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/shared"
@@ -160,6 +161,27 @@ func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Email:    user.Email,
 		Phone:    user.Phone,
 		FullName: user.FullName,
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("Error encoding response: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (uh *UserHandler) ProtectedEndpoint(w http.ResponseWriter, r *http.Request) {
+	// Get the claims from the context
+	claims, ok := r.Context().Value(middelwares.UserContextKey).(*jwt.Claims)
+	if !ok {
+		http.Error(w, "Unable to retrieve user from context", http.StatusInternalServerError)
+		return
+	}
+
+	// Use the claims (e.g., claims.UserId)
+	w.WriteHeader(http.StatusCreated)
+	response := map[string]string{
+		"Email": claims.Email,
 	}
 
 	if err := json.NewEncoder(w).Encode(response); err != nil {
