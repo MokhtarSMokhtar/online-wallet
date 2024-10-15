@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/MokhtarSMokhtar/online-wallet/comman/jwt"
-	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/middelwares"
+	md "github.com/MokhtarSMokhtar/online-wallet/comman/models"
+	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/http/middelwares"
+	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/messsage"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/models"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/repository"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/shared"
@@ -101,7 +103,19 @@ func (uh *UserHandler) Signup(w http.ResponseWriter, r *http.Request) {
 		Phone:    user.Phone,
 		FullName: user.FullName,
 	}
+	//publish
+	event := md.UserRegisteredEvent{
+		UserID:    user.Id,
+		Email:     user.Email,
+		Username:  user.FullName,
+		Timestamp: time.Now().Format(time.RFC3339),
+	}
 
+	err = messsage.GetRabbitMQInstance().PublishUserRegisterEvent(event)
+	if err != nil {
+		http.Error(w, "Failed to publish event", http.StatusInternalServerError)
+		return
+	}
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		log.Printf("Error encoding response: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
