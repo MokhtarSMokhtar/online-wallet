@@ -1,7 +1,8 @@
-package handlers
+package routers
 
 import (
-	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/middelwares"
+	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/handlers"
+	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/http/middelwares"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/repository"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/sql"
 	"log"
@@ -24,7 +25,7 @@ func InitializeRoutes() *http.ServeMux {
 	}
 
 	// Initialize handler
-	userHandler := NewUserHandler(userRepo)
+	userHandler := handlers.NewUserHandler(userRepo)
 
 	// Define routes and associate them with handlers
 	mux.HandleFunc("/signup", userHandler.Signup)

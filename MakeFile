@@ -6,6 +6,7 @@ DB_PASSWORD := strongPass
 DB_HOST := localhost
 DB_PORT := 5432
 DB_NAME := identity_db
+DB_Wallet := wallet_db
 
 #default target
 .PHONY : help
@@ -37,3 +38,5 @@ docker-up:
 .PHONY: create-db
 create-db:
 	$(DOCKER_COMPOSE) exec postgres psql -U $(DB_USER) -c "CREATE DATABASE $(DB_NAME);"
+create-wallet-db:
+	$(DOCKER_COMPOSE) exec postgres psql -U $(DB_USER) -c "CREATE DATABASE $(DB_Wallet);"
