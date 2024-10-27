@@ -30,12 +30,3 @@ func NewConfig() *Config {
 	}
 	return cfg
 }
-func GetPort() string {
-
-	godoterr := godotenv.Load()
-	if godoterr != nil {
-		log.Fatal("Error loading .env file")
-	}
-	port := os.Getenv("PORT")
-	return port
-}

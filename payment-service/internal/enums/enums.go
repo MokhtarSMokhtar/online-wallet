@@ -11,6 +11,8 @@ const (
 	Pending    PaymentStatus = "Pending"
 	Authorized PaymentStatus = "Authorized"
 	Timeout    PaymentStatus = "Timeout"
+	Captured   PaymentStatus = "Captured"
+	Failed     PaymentStatus = "Failed"
 )
 
 const (
