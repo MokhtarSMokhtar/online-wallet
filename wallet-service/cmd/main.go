@@ -1,27 +1,41 @@
 package main
 
 import (
-	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/database"
-	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/messaging"
+	_ "github.com/MokhtarSMokhtar/online-wallet/wallet-service/docs" // Import the generated docs
+	http "github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/adapters/http/router"
+	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/adapters/messaging"
+	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/infrastructure"
+	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/infrastructure/persistence"
 	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/shared"
 	"log"
-	"net/http"
 )
 
+// @title           Online Wallet API
+// @version         1.0
+// @description     API documentation for the Online Wallet Service
+
 func main() {
-	defer database.CloseDB()
+	db := persistence.GetDB()
+
+	defer func() {
+		sqlDB, err := db.DB()
+		if err == nil {
+			sqlDB.Close()
+		}
+	}()
+
+	// Run migrations
+	infrastructure.MigrateDb()
+
 	rabbitMQ := messaging.GetRabbitMQInstance()
 	defer rabbitMQ.Close()
-
-	// Run database migrations
-
-	// Start consuming UserRegistered events
+	infrastructure.MigrateDb()
 	rabbitMQ.ConsumeUserRegisteredEvents()
-
-	// Start the server
 	port := shared.GetPort()
-	log.Printf("Wallet Service is running on port %s", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatalf("Server failed to start: %v", err)
+	// Start the server
+	router := http.SetupRouter()
+	log.Printf("Starting server on port %s", port)
+	if err := router.Run(":" + port); err != nil {
+		log.Fatalf("Failed to run server: %v", err)
 	}
 }
