@@ -105,7 +105,7 @@ func (uh *UserHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	}
 	//publish
 	event := md.UserRegisteredEvent{
-		UserID:    user.Id,
+		UserID:    int32(user.Id),
 		Email:     user.Email,
 		Username:  user.FullName,
 		Timestamp: time.Now().Format(time.RFC3339),
