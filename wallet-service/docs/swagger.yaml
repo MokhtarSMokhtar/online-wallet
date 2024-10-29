@@ -1,0 +1,203 @@
+basePath: /
+definitions:
+  enums.TransactionType:
+    enum:
+    - BalanceAddition
+    - SendToUser
+    type: string
+    x-enum-varnames:
+    - BalanceAddition
+    - SendToUser
+  handlers.BalanceResponse:
+    properties:
+      balance:
+        type: number
+    type: object
+  handlers.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  handlers.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  handlers.RedeemCouponRequest:
+    properties:
+      code:
+        type: string
+    required:
+    - code
+    type: object
+  handlers.TransactionsResponse:
+    properties:
+      transactions:
+        items:
+          $ref: '#/definitions/models.WalletTransaction'
+        type: array
+    type: object
+  handlers.TransferFundsRequest:
+    properties:
+      amount:
+        type: number
+      to_user_id:
+        type: integer
+    required:
+    - amount
+    - to_user_id
+    type: object
+  models.WalletTransaction:
+    properties:
+      balance:
+        type: number
+      created_at:
+        type: string
+      credit:
+        type: number
+      deposit:
+        type: number
+      id:
+        type: integer
+      transaction_reason:
+        type: string
+      type:
+        $ref: '#/definitions/enums.TransactionType'
+      user_id:
+        type: integer
+    type: object
+host: localhost:8083
+info:
+  contact:
+    email: support@swagger.io
+    name: Mokhtar S. Mokhtar
+    url: http://www.swagger.io/support
+  description: API documentation for the Online Wallet Service
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Online Wallet API
+  version: "1.0"
+paths:
+  /wallet/balance:
+    get:
+      description: Retrieves the current balance of the user's wallet
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Balance amount
+          schema:
+            $ref: '#/definitions/handlers.BalanceResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get wallet balance
+      tags:
+      - Wallet
+  /wallet/redeem-coupon:
+    post:
+      consumes:
+      - application/json
+      description: Allows a user to redeem a coupon code
+      parameters:
+      - description: Coupon Code
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.RedeemCouponRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Coupon redeemed successfully
+          schema:
+            $ref: '#/definitions/handlers.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Redeem a coupon
+      tags:
+      - Wallet
+  /wallet/transactions:
+    get:
+      description: Retrieves the user's wallet transaction history
+      parameters:
+      - description: Number of transactions to retrieve
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of transactions
+          schema:
+            $ref: '#/definitions/handlers.TransactionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get transaction history
+      tags:
+      - Wallet
+  /wallet/transfer:
+    post:
+      consumes:
+      - application/json
+      description: Allows a user to transfer funds to another user
+      parameters:
+      - description: Transfer Details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.TransferFundsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Transfer successful
+          schema:
+            $ref: '#/definitions/handlers.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Transfer funds to another user
+      tags:
+      - Wallet
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

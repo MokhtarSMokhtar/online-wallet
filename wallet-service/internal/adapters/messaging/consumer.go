@@ -3,8 +3,11 @@ package messaging
 import (
 	"encoding/json"
 	md "github.com/MokhtarSMokhtar/online-wallet/comman/models"
-	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/database"
-	repository "github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/wallet-repository"
+	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/domain/enums"
+	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/domain/models"
+	repository "github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/domain/repositories"
+	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/infrastructure/persistence"
+	"gorm.io/gorm"
 	"log"
 )
 
@@ -44,7 +47,7 @@ func (r *RabbitMQ) ConsumeUserRegisteredEvents() {
 				continue
 			}
 
-			d.Ack(false) // Acknowledge the message upon successful processing
+			d.Ack(false)
 		}
 	}()
 }
@@ -52,13 +55,27 @@ func (r *RabbitMQ) ConsumeUserRegisteredEvents() {
 // HandleUserRegisteredEvent processes the UserRegisteredEvent
 func (r *RabbitMQ) HandleUserRegisteredEvent(event md.UserRegisteredEvent) error {
 	// Implement the logic to create a wallet for the user
-	db := database.GetDB()
+	db := persistence.GetDB()
 	repo := repository.NewWalletRepository(db)
-	err := repo.AddUserWallet(event.UserID)
+	err := db.Transaction(func(tx *gorm.DB) error {
+		walletTran := models.WalletTransaction{
+			Balance:           5.00,
+			UserId:            event.UserID,
+			TransactionReason: "Redeemed coupon",
+			TransactionType:   enums.BalanceAddition,
+			Credit:            5.00,
+		}
+		err := repo.CreateWalletTransaction(&walletTran)
+		if err != nil {
+			return err
+		}
+		log.Printf("Wallet created for UserID: %d", event.UserID)
+		return nil
+	})
+
 	if err != nil {
+		log.Printf("Failed to create a wallet transaction: %v", err)
 		return err
 	}
-
-	log.Printf("Wallet created for UserID: %d", event.UserID)
 	return nil
 }
