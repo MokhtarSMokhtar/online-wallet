@@ -25,10 +25,27 @@ type PaymentHandler struct {
 	paymentRepository interfaces.PaymentRepository
 }
 
+// ErrorResponse represents an error response
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 func NewPaymentHandler(paymentService interfaces.PaymentService, repository interfaces.PaymentRepository) *PaymentHandler {
 	return &PaymentHandler{paymentService: paymentService, paymentRepository: repository}
 }
 
+// UserPaymentHandler godoc
+// @Summary      Process a user payment
+// @Description  Processes a payment and returns the transaction details
+// @Tags         Payments
+// @Accept       json
+// @Produce      json
+// @Param        request body models.CreateChargeRequestPayload true "Payment information"
+// @Success      200  {object} models.ChargeResponse "Payment processed successfully"
+// @Failure      400  {object}  ErrorResponse   "Bad Request"
+// @Failure      500  {object}  ErrorResponse   "Internal Server Error"
+// @Router       /payments [post]
+// @Security     ApiKeyAuth
 func (h *PaymentHandler) UserPaymentHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
@@ -96,6 +113,17 @@ func (h *PaymentHandler) UserPaymentHandler(w http.ResponseWriter, r *http.Reque
 	json.NewEncoder(w).Encode(dto)
 }
 
+// CapturePayment godoc
+// @Summary      Capture a payment
+// @Description  Captures a payment after authorization
+// @Tags         Payments
+// @Accept       json
+// @Produce      json
+// @Param        request body models.ChargeResponse true "Payment capture information"
+// @Success      200  "Payment captured successfully"
+// @Failure      400  {object}  ErrorResponse   "Bad Request"
+// @Failure      500  {object}  ErrorResponse   "Internal Server Error"
+// @Router       /payments/capture [post]
 func (h *PaymentHandler) CapturePayment(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)

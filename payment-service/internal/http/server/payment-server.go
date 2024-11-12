@@ -9,6 +9,7 @@ import (
 	tapclient "github.com/MokhatrSMokhtar/online-wallet/payment-service/internal/tap-payment/http"
 	services "github.com/MokhatrSMokhtar/online-wallet/payment-service/internal/tap-payment/tapservice"
 	"github.com/MokhtarSMokhtar/online-wallet/comman/middelwares"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 )
@@ -33,7 +34,7 @@ func InitializePaymentServer() {
 	paymentHandler := handler.NewPaymentHandler(paymentService, paymentRepo)
 
 	mux := http.NewServeMux()
-
+	mux.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 	mux.Handle("/payments", middelwares.AuthMiddleware(http.HandlerFunc(paymentHandler.UserPaymentHandler)))
 	mux.Handle("/payments/capture", http.HandlerFunc(paymentHandler.CapturePayment))
 

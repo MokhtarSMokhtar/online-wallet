@@ -14,7 +14,7 @@ type User struct {
 	Phone        string         `json:"phone"`
 	PasswordHash []byte         `json:"password_hash"`
 	Salt         []byte         `json:"salt"`
-	UserType     enums.UserType `json:"user_type"`
+	UserType     enums.UserType `json:"user_type" swaggertype:"string"`
 	Gender       string         `json:"gender"`
 	CreatedAt    time.Time      `json:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at"`
@@ -27,7 +27,7 @@ type RegisterUserRequest struct {
 	CountryCode string         `json:"country_code"`
 	Phone       string         `json:"phone"`
 	Password    string         `json:"password"`
-	UserType    enums.UserType `json:"user_type"`
+	UserType    enums.UserType `json:"user_type" swaggertype:"string"`
 	Gender      string         `json:"gender"`
 }
 
