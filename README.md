@@ -1,30 +1,5 @@
 # Online Wallet System
 
-## Table of Contents
-
-- [Introduction](#introduction)
-- [Architecture Diagram](#architecture-diagram)
-- [Services Overview](#services-overview)
-  - [1. Identity Service](#1-identity-service)
-  - [2. Wallet Service](#2-wallet-service)
-  - [3. Payment Service](#3-payment-service)
-  - [4. Common Package](#4-common-package)
-- [Inter-Service Communication](#inter-service-communication)
-- [Event Flow](#event-flow)
-- [Setup and Installation](#setup-and-installation)
-  - [Prerequisites](#prerequisites)
-  - [Environment Variables](#environment-variables)
-  - [Database Setup](#database-setup)
-  - [Running the Services](#running-the-services)
-- [Usage](#usage)
-  - [1. User Registration and Login](#1-user-registration-and-login)
-  - [2. Wallet Operations](#2-wallet-operations)
-  - [3. Payment Operations](#3-payment-operations)
-- [API Documentation](#api-documentation)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
 ## Introduction
 
 Welcome to the **Online Wallet System**, a microservices-based application designed to manage user authentication, wallet transactions, and payment processing. The system is composed of the following services:
