@@ -1,6 +1,6 @@
 package models
 
-import "github.com/MokhatrSMokhtar/online-wallet/payment-service/internal/enums"
+import "github.com/MokhtarSMokhtar/online-wallet/payment-service/internal/enums"
 
 type PaymentRequestModel struct {
 	AmountToPay              float64                 `json:"amountToPay"`

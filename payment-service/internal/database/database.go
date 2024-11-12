@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
-	"github.com/MokhatrSMokhtar/online-wallet/payment-service/config"
+	"github.com/MokhtarSMokhtar/online-wallet/payment-service/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
