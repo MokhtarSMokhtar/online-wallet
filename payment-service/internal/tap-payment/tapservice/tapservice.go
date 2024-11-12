@@ -3,9 +3,9 @@ package services
 import (
 	"context"
 	"fmt"
-	"github.com/MokhatrSMokhtar/online-wallet/payment-service/internal/enums"
-	"github.com/MokhatrSMokhtar/online-wallet/payment-service/internal/interfaces"
-	"github.com/MokhatrSMokhtar/online-wallet/payment-service/internal/models"
+	"github.com/MokhtarSMokhtar/online-wallet/payment-service/internal/enums"
+	"github.com/MokhtarSMokhtar/online-wallet/payment-service/internal/interfaces"
+	"github.com/MokhtarSMokhtar/online-wallet/payment-service/internal/models"
 )
 
 type paymentService struct {

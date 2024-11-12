@@ -5,18 +5,21 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/MokhatrSMokhtar/online-wallet/payment-service/config"
-	"github.com/MokhatrSMokhtar/online-wallet/payment-service/internal/enums"
-	"github.com/MokhatrSMokhtar/online-wallet/payment-service/internal/interfaces"
-	"github.com/MokhatrSMokhtar/online-wallet/payment-service/internal/models"
 	"github.com/MokhtarSMokhtar/online-wallet/comman/jwt"
 	"github.com/MokhtarSMokhtar/online-wallet/comman/middelwares"
 	"github.com/MokhtarSMokhtar/online-wallet/comman/utile"
+	walletpb "github.com/MokhtarSMokhtar/online-wallet/online-wallet-protos/github.com/MokhtarSMokhtar/online-wallet-protos/wallet"
+	"github.com/MokhtarSMokhtar/online-wallet/payment-service/config"
+	"github.com/MokhtarSMokhtar/online-wallet/payment-service/internal/enums"
+	grpcclient "github.com/MokhtarSMokhtar/online-wallet/payment-service/internal/grpc"
+	"github.com/MokhtarSMokhtar/online-wallet/payment-service/internal/interfaces"
+	"github.com/MokhtarSMokhtar/online-wallet/payment-service/internal/models"
 	"github.com/oklog/ulid/v2"
 	"io"
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -177,8 +180,34 @@ func (h *PaymentHandler) CapturePayment(w http.ResponseWriter, r *http.Request) 
 
 func HandelSuccessWalletChargePayment(request *models.PaymentRequest, res models.ChargeResponse) {
 	//TODO Log
-	//Grpc Call to update the wallet service
+	userId, err := strconv.Atoi(request.UserId)
+	if err != nil {
+		log.Printf("Error converting UserId to integer: %v", err)
+		return
+	}
+	walletClient := grpcclient.GetWalletServiceClient()
+	amount := float32(request.Amount)
+	updateReq := &walletpb.UpdateWalletRequest{
+		UserId: int32(userId), // Correctly set the UserId
+		Amount: amount,
+		Reason: "Charge Wallet",
+	}
+	// Make the gRPC call
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
 
+	resp, err := walletClient.UpdateWallet(ctx, updateReq)
+	if err != nil {
+		log.Printf("Failed to update wallet: %v", err)
+		return
+	}
+
+	if !resp.Success {
+		log.Printf("Wallet update failed: %s", resp.Message)
+		return
+	}
+
+	log.Printf("Wallet updated successfully for user %s", request.UserId)
 }
 
 func (h *PaymentHandler) handelFailedPaymentReq(ctx context.Context, paymentRe *models.PaymentRequest, res models.ChargeResponse) error {
