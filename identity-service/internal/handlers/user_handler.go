@@ -24,6 +24,11 @@ type UserHandler struct {
 	Repo *repository.UserRepository
 }
 
+// ErrorResponse represents an error response
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 // NewUserHandler creates a new UserHandler
 func NewUserHandler(repo *repository.UserRepository) *UserHandler {
 	return &UserHandler{
@@ -31,6 +36,17 @@ func NewUserHandler(repo *repository.UserRepository) *UserHandler {
 	}
 }
 
+// Signup godoc
+// @Summary      Register a new user
+// @Description  Registers a new user in the system
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Param        request body models.RegisterUserRequest true "User information"
+// @Success      201  {object}  models.UserLogin     "User created successfully"
+// @Failure      400  {object}  ErrorResponse        "Bad Request"
+// @Failure      500  {object}  ErrorResponse        "Internal Server Error"
+// @Router       /signup [post]
 func (uh *UserHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -123,6 +139,18 @@ func (uh *UserHandler) Signup(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Login godoc
+// @Summary      User login
+// @Description  Authenticates a user and returns a token
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Param        request body models.UserLoginRequest true "User login information"
+// @Success      200  {object}  models.UserLogin     "User logged in successfully"
+// @Failure      400  {object}  ErrorResponse        "Bad Request"
+// @Failure      401  {object}  ErrorResponse        "Unauthorized"
+// @Failure      500  {object}  ErrorResponse        "Internal Server Error"
+// @Router       /login [post]
 func (uh *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
