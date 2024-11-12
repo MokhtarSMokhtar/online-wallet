@@ -1,4 +1,4 @@
-module github.com/MokhtarSMokhtar/online-wallet-protos
+module github.com/MokhtarSMokhtar/online-wallet/online-wallet-protos
 
 go 1.23.1
 
