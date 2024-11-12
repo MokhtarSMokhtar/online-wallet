@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/MokhatrSMokhtar/online-wallet/payment-service/internal/enums"
+	"github.com/MokhtarSMokhtar/online-wallet/payment-service/internal/enums"
 	"time"
 )
 

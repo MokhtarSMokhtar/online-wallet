@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/MokhatrSMokhtar/online-wallet/payment-service/docs"
-	_ "github.com/MokhatrSMokhtar/online-wallet/payment-service/docs"
-	"github.com/MokhatrSMokhtar/online-wallet/payment-service/internal/http/server"
+	"github.com/MokhtarSMokhtar/online-wallet/payment-service/docs"
+	_ "github.com/MokhtarSMokhtar/online-wallet/payment-service/docs"
+	"github.com/MokhtarSMokhtar/online-wallet/payment-service/internal/http/server"
 )
 
 func main() {
