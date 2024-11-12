@@ -1,42 +1,103 @@
-APP_Name := online-Wallet
+# Makefile for Online Wallet System
+
+# Variables
+APP_NAME := online-wallet
 DOCKER_COMPOSE := docker-compose
 GO := go
+
+# Database configuration
 DB_USER := postgres
 DB_PASSWORD := strongPass
 DB_HOST := localhost
 DB_PORT := 5432
-DB_NAME := identity_db
-DB_Wallet := wallet_db
+DB_NAME_IDENTITY := identity_db
+DB_NAME_WALLET := wallet_db
+DB_NAME_PAYMENT := payment_db
 
-#default target
-.PHONY : help
-help :
+# Services directories
+IDENTITY_SERVICE_DIR := identity-service
+WALLET_SERVICE_DIR := wallet-service
+PAYMENT_SERVICE_DIR := payment-service
+COMMON_DIR := common
+
+# Default target
+.PHONY: help
+help:
 	@echo "Usage:"
-	@echo "  make build        Build the Go application"
-	@echo "  make run          Run the Go application"
-	@echo "  make docker-up    Start Docker Compose services"
-	@echo "  make docker-down  Stop Docker Compose services"
-	@echo "  make create-db    Create the database (if not created)"
-	@echo "  make migrate      Run database migrations"
+	@echo "  make build               Build all Go applications"
+	@echo "  make run                 Run all Go applications"
+	@echo "  make run-identity        Run the Identity Service"
+	@echo "  make run-wallet          Run the Wallet Service"
+	@echo "  make run-payment         Run the Payment Service"
+	@echo "  make docker-up           Start Docker Compose services"
+	@echo "  make docker-down         Stop Docker Compose services"
+	@echo "  make create-dbs          Create all databases"
+	@echo "  make migrate             Run database migrations"
+	@echo "  make clean               Clean built binaries"
 
-# Build the Go application
+# Build all Go applications
 .PHONY: build
 build:
-	$(GO) build -o bin/$(APP_NAME) ./cmd/main.go
+	cd $(IDENTITY_SERVICE_DIR) && $(GO) build -o bin/identity-service ./cmd/main.go
+	cd $(WALLET_SERVICE_DIR) && $(GO) build -o bin/wallet-service ./cmd/main.go
+	cd $(PAYMENT_SERVICE_DIR) && $(GO) build -o bin/payment-service ./cmd/main.go
 
-# Run the Go application
+# Run all Go applications
 .PHONY: run
 run:
-	$(GO) run ./identity-service/main.go
+	$(MAKE) -j3 run-identity run-wallet run-payment
+
+# Run Identity Service
+.PHONY: run-identity
+run-identity:
+	cd $(IDENTITY_SERVICE_DIR) && $(GO) run ./cmd/main.go
+
+# Run Wallet Service
+.PHONY: run-wallet
+run-wallet:
+	cd $(WALLET_SERVICE_DIR) && $(GO) run ./cmd/main.go
+
+# Run Payment Service
+.PHONY: run-payment
+run-payment:
+	cd $(PAYMENT_SERVICE_DIR) && $(GO) run ./cmd/main.go
 
 # Start Docker Compose services
 .PHONY: docker-up
 docker-up:
 	$(DOCKER_COMPOSE) up -d
 
-# Create the database (if not using POSTGRES_DB)
-.PHONY: create-db
-create-db:
-	$(DOCKER_COMPOSE) exec postgres psql -U $(DB_USER) -c "CREATE DATABASE $(DB_NAME);"
-create-wallet-db:
-	$(DOCKER_COMPOSE) exec postgres psql -U $(DB_USER) -c "CREATE DATABASE $(DB_Wallet);"
+# Stop Docker Compose services
+.PHONY: docker-down
+docker-down:
+	$(DOCKER_COMPOSE) down
+
+# Create databases
+.PHONY: create-dbs
+create-dbs:
+	# Wait for PostgreSQL to be ready
+	sleep 5
+	# Identity Service DB
+	$(DOCKER_COMPOSE) exec postgres psql -U $(DB_USER) -c "CREATE DATABASE $(DB_NAME_IDENTITY);"
+	# Wallet Service DB
+	$(DOCKER_COMPOSE) exec postgres psql -U $(DB_USER) -c "CREATE DATABASE $(DB_NAME_WALLET);"
+	# Payment Service DB (if needed for MongoDB)
+	# MongoDB does not require explicit database creation; it creates databases on use.
+
+# Run database migrations
+.PHONY: migrate
+migrate:
+	# Run migrations for Identity Service
+	cd $(IDENTITY_SERVICE_DIR) && $(GO) run ./cmd/migrate.go
+	# Run migrations for Wallet Service
+	cd $(WALLET_SERVICE_DIR) && $(GO) run ./cmd/migrate.go
+	# No migrations needed for Payment Service if using MongoDB
+
+# Clean built binaries
+.PHONY: clean
+clean:
+	rm -rf $(IDENTITY_SERVICE_DIR)/bin/*
+	rm -rf $(WALLET_SERVICE_DIR)/bin/*
+	rm -rf $(PAYMENT_SERVICE_DIR)/bin/*
+
+# Additional targets for individual services can be added as needed
