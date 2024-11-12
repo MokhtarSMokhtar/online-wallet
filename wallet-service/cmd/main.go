@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "github.com/MokhtarSMokhtar/online-wallet/wallet-service/docs" // Import the generated docs
+	_ "github.com/MokhtarSMokhtar/online-wallet/wallet-service/docs"
 	http "github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/adapters/http/router"
 	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/adapters/messaging"
 	"github.com/MokhtarSMokhtar/online-wallet/wallet-service/internal/infrastructure"
