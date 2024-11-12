@@ -1,0 +1,20 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    email: support@yourwebsite.com
+    name: Your Name
+    url: http://www.yourwebsite.com/support
+  description: API documentation for the Identity Service
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Identity Service API
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    type: apiKey
+swagger: "2.0"

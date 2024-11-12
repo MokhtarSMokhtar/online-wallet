@@ -5,6 +5,7 @@ import (
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/http/middelwares"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/repository"
 	"github.com/MokhtarSMokhtar/online-wallet/identity-service/internal/sql"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 )
@@ -30,6 +31,7 @@ func InitializeRoutes() *http.ServeMux {
 	// Define routes and associate them with handlers
 	mux.HandleFunc("/signup", userHandler.Signup)
 	mux.HandleFunc("/login", userHandler.Login)
+	mux.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 	protectedMux := http.NewServeMux()
 	protectedMux.HandleFunc("/protected", userHandler.ProtectedEndpoint)
 
