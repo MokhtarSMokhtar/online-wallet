@@ -37,7 +37,6 @@ graph LR
 
     subgraph Common_Package
         direction LR
-        CP[Common Package]
     end
 
     U -- Sign Up/Login --> IS
@@ -45,12 +44,8 @@ graph LR
     U -- Wallet Operations --> WS
     U -- Payment Operations --> PS
     PS -- gRPC Calls --> WS
-    IS -- Uses --> CP
-    WS -- Uses --> CP
-    PS -- Uses --> CP
 
     style IS fill:#bbf,stroke:#333,stroke-width:2px
     style WS fill:#bfb,stroke:#333,stroke-width:2px
     style PS fill:#f9f,stroke:#333,stroke-width:2px
-    style CP fill:#ff9,stroke:#333,stroke-width:2px
     style U fill:#f66,stroke:#333,stroke-width:2px
