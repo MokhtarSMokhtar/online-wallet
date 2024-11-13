@@ -1,5 +1,6 @@
 # Online Wallet System
 
+
 ## Introduction
 
 Welcome to the **Online Wallet System**, a microservices-based application designed to manage user authentication, wallet transactions, and payment processing. The system is composed of the following services:
@@ -14,35 +15,42 @@ This README provides an overview of the system architecture, services, setup ins
 
 ```mermaid
 graph LR
-    subgraph "Identity Service"
-        IdentityService[Identity Service]
+    subgraph User
+        direction LR
+        U[User]
     end
 
-    subgraph "Wallet Service"
-        WalletService[Wallet Service]
+    subgraph Identity_Service
+        direction LR
+        IS[Identity Service]
     end
 
-    subgraph "Payment Service"
-        PaymentService[Payment Service]
+    subgraph Wallet_Service
+        direction LR
+        WS[Wallet Service]
     end
 
-    subgraph "Common Package"
-        CommonPackage[Common Package]
+    subgraph Payment_Service
+        direction LR
+        PS[Payment Service]
     end
 
-    User[User]
+    subgraph Common_Package
+        direction LR
+        CP[Common Package]
+    end
 
-    User -->|Signup/Login| IdentityService
-    IdentityService -->|Publishes Event| WalletService
-    User -->|Wallet Operations| WalletService
-    User -->|Payment Operations| PaymentService
-    PaymentService -->|gRPC Calls| WalletService
-    PaymentService -->|Uses| CommonPackage
-    IdentityService -->|Uses| CommonPackage
-    WalletService -->|Uses| CommonPackage
+    U -- Sign Up/Login --> IS
+    IS -- Publishes UserRegisteredEvent --> WS
+    U -- Wallet Operations --> WS
+    U -- Payment Operations --> PS
+    PS -- gRPC Calls --> WS
+    IS -- Uses --> CP
+    WS -- Uses --> CP
+    PS -- Uses --> CP
 
-    style IdentityService fill:#bbf,stroke:#333,stroke-width:2px
-    style WalletService fill:#bfb,stroke:#333,stroke-width:2px
-    style PaymentService fill:#f9f,stroke:#333,stroke-width:2px
-    style CommonPackage fill:#ff9,stroke:#333,stroke-width:2px
-    style User fill:#f66,stroke:#333,stroke-width:2px
+    style IS fill:#bbf,stroke:#333,stroke-width:2px
+    style WS fill:#bfb,stroke:#333,stroke-width:2px
+    style PS fill:#f9f,stroke:#333,stroke-width:2px
+    style CP fill:#ff9,stroke:#333,stroke-width:2px
+    style U fill:#f66,stroke:#333,stroke-width:2px
