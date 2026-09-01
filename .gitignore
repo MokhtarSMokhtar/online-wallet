@@ -1,0 +1,11 @@
+# Secrets — never commit; copy .env.example to .env per service
+.env
+
+# IDE
+.idea/
+
+# Build output
+bin/
+
+# OS
+.DS_Store
